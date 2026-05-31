@@ -42,7 +42,7 @@ Have fun and consider risk vs reward!
 
     for char in message:
         print(char, end='', flush=True)
-        time.sleep(0.01)
+        time.sleep(0.02)
     return
 
 def play_out_year() -> tuple[float, float, float]:
@@ -67,7 +67,9 @@ def allocate_funds() -> None:
     investment_MSCIEF = float(input("Amount to invest in MSCIEF: $"))
         
 if __name__ == "__main__":
-    welcome()
+    if(input("Do you want to see the intro (y/n): ")).lower() == "y":
+        welcome()
+    
     allocate_funds()
     reallocate_used = False
     
