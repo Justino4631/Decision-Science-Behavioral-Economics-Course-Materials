@@ -1,5 +1,5 @@
 """
-This is the the code to run the first simulation of the course! It illustrates the opportunity cost that
+This is the code to run the first simulation of the course! It illustrates the opportunity cost that
 people in real life have to face when choosing a job candidate.
 
 author: Justin Baratta
@@ -114,7 +114,7 @@ if __name__ == "__main__":
         print("\nWhat would you like to do?")
         if i not in interviewed_candidates and time_blocks > 0:
             print("[I] Interview this candidate (Reveals desired qualities. Costs 1 time block)")
-        print("[H] Hire this candidate right now")
+        print("[H] Hire a candidate (Current or previously passed)")
         print("[P] Pass on this candidate")
         print("[S] See all currently available candidates")
 
@@ -128,7 +128,7 @@ if __name__ == "__main__":
                     print(f"   - {quality}: {candidates[i][quality]}/100")
             else:
                 print(f"Current Candidate {i + 1}: General Average Score: {overall_avg:.2f} (Snippet -> {revealed_quality}: {candidates[i][revealed_quality]}/100)")
-            time.sleep(2)
+            time.sleep(1)
             
             if passed_candidates:
                 print("Previously Passed Candidates:")
@@ -140,7 +140,7 @@ if __name__ == "__main__":
                             print(f"     - {quality}: {candidates[index][quality]}/100")
                     else:
                         print(f" - Candidate {index + 1}: General Average Score: {past_avg:.2f}")
-                    time.sleep(2)
+                    time.sleep(1)
             else:
                 print("No previously passed candidates are currently available.")
             continue
@@ -158,8 +158,23 @@ if __name__ == "__main__":
                 break
 
         elif action == "H":
-            hired_candidate = candidates[i]
-            break
+            print(f"\nAvailable options to hire:")
+            print(f" - Candidate {i + 1} (Current)")
+            for passed_index in passed_candidates:
+                print(f" - Candidate {passed_index + 1} (Passed)")
+                
+            try:
+                choice = int(input("\nEnter the candidate number you wish to hire: ")) - 1
+                if choice == i:
+                    hired_candidate = candidates[i]
+                    break
+                elif choice in passed_candidates:
+                    hired_candidate = candidates[choice]
+                    break
+                else:
+                    print("That candidate is not available for hire.")
+            except ValueError:
+                print("Invalid input. Returning to menu.")
 
         elif action == "P":
             passed_candidates[i] = 20
