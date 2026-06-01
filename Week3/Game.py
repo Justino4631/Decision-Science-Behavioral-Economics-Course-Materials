@@ -19,7 +19,7 @@ SAVINGS_FUNDS = 0
 def welcome() -> None:
     message = f"""\nWelcome to your simulation for Week 3! This is a simple game illustrating loss aversion.
 \nYou start with $10K in checkings.
-You can, at any time, move money from your checkings to your game funds. Every turn, the money you have in the game
+You can, at any time, move money from your checkings to your game funds or savings. Every turn, the money you have in the game
 can either double or halve. After each turn, you can move money from your game funds to your savings. Once you put money
 in savings, it can never be taken out of savings. You can choose at any time to end the game, and your total portfolio value will be shown.
 \nHave fun and consider your potential wins and losses!"""
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         print(f"Savings Funds: ${SAVINGS_FUNDS:.2f}")
 
         if CHECKING_FUNDS > 0:
-            checking_to_game = int(input("How much money would you like to transfer from checking funds to game funds: "))
+            checking_to_game = float(input("How much money would you like to transfer from checking funds to game funds: "))
 
             if checking_to_game <= CHECKING_FUNDS:
                 GAME_FUNDS += checking_to_game
@@ -49,7 +49,7 @@ if __name__ == "__main__":
             else:
                 print("Not enough funds in checking, skipping...")
 
-            checking_to_saving = int(input("How much money would you like to transfer from checkings to savings: "))
+            checking_to_saving = float(input("How much money would you like to transfer from checkings to savings: "))
 
             if checking_to_saving <= CHECKING_FUNDS:
                 CHECKING_FUNDS -= checking_to_saving
@@ -68,7 +68,7 @@ if __name__ == "__main__":
                 print("-> UNLUCKY TURN! Your game funds halved!")
 
             print(f"Game Funds after event: ${GAME_FUNDS:.2f}")
-            game_to_saving = int(input("How much money would you like to transfer from game funds to savings: "))
+            game_to_saving = float(input("How much money would you like to transfer from game funds to savings: "))
             if game_to_saving <= GAME_FUNDS:
                 GAME_FUNDS -= game_to_saving
                 SAVINGS_FUNDS += game_to_saving

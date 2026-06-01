@@ -55,17 +55,16 @@ def play_out_year() -> tuple[float, float, float]:
     investment_Bonds *= (1 + return_Bonds / 100)
     investment_MSCIEF *= (1 + return_MSCIEF / 100)
     INITIAL_MONEY = investment_SP + investment_Bonds + investment_MSCIEF
-    
     return return_SP, return_Bonds, return_MSCIEF
 
 def allocate_funds() -> None:
     global INITIAL_MONEY, investment_SP, investment_Bonds, investment_MSCIEF
     print(f"\nTotal available funds to allocate: ${INITIAL_MONEY:.2f}")
-    
+
     investment_SP = float(input("Amount to invest in S&P 500: $"))
     investment_Bonds = float(input("Amount to invest in Bonds: $"))
     investment_MSCIEF = float(input("Amount to invest in MSCIEF: $"))
-        
+
 if __name__ == "__main__":
     if(input("Do you want to see the intro (y/n): ")).lower() == "y":
         welcome()
@@ -112,7 +111,7 @@ if __name__ == "__main__":
         ax.legend(loc='upper left')
         ax.grid(True, linestyle='--', alpha=0.7)
         
-        fig.savefig('portfolio_growth.png', bbox_inches='tight')
+        fig.savefig('./Week2/portfolio_growth.png', bbox_inches='tight')
 
         total_pct_change = ((INITIAL_MONEY - portfolio_starting_value) / portfolio_starting_value) * 100
         
@@ -139,4 +138,3 @@ if __name__ == "__main__":
     print("SIMULATION ENDED")
     print(f"Final Account Yield Balance: ${INITIAL_MONEY:.2f}")
     print("="*40)
-    fig.savefig('./Week2/portfolio_growth.png', bbox_inches='tight')
