@@ -1,0 +1,134 @@
+{
+    "generous_tft": {
+        "avg_payout": 578.3913043478261,
+        "wins": 0,
+        "ties": 13,
+        "losses": 10
+    },
+    "go_by_majority": {
+        "avg_payout": 557.695652173913,
+        "wins": 2,
+        "ties": 12,
+        "losses": 9
+    },
+    "tftt": {
+        "avg_payout": 548.304347826087,
+        "wins": 0,
+        "ties": 12,
+        "losses": 11
+    },
+    "tideman_and_chieruzzi": {
+        "avg_payout": 536.0869565217391,
+        "wins": 2,
+        "ties": 14,
+        "losses": 7
+    },
+    "tft": {
+        "avg_payout": 532.7826086956521,
+        "wins": 0,
+        "ties": 14,
+        "losses": 9
+    },
+    "downing": {
+        "avg_payout": 516.2608695652174,
+        "wins": 6,
+        "ties": 7,
+        "losses": 10
+    },
+    "grofman": {
+        "avg_payout": 513.7826086956521,
+        "wins": 0,
+        "ties": 12,
+        "losses": 11
+    },
+    "hard_tft": {
+        "avg_payout": 510.9130434782609,
+        "wins": 6,
+        "ties": 15,
+        "losses": 2
+    },
+    "pavlov": {
+        "avg_payout": 497.39130434782606,
+        "wins": 0,
+        "ties": 13,
+        "losses": 10
+    },
+    "always_c": {
+        "avg_payout": 491.8695652173913,
+        "wins": 0,
+        "ties": 12,
+        "losses": 11
+    },
+    "remorseful_prober": {
+        "avg_payout": 488.8695652173913,
+        "wins": 8,
+        "ties": 4,
+        "losses": 11
+    },
+    "gradual": {
+        "avg_payout": 488.30434782608694,
+        "wins": 5,
+        "ties": 14,
+        "losses": 4
+    },
+    "friedman": {
+        "avg_payout": 472.8695652173913,
+        "wins": 5,
+        "ties": 16,
+        "losses": 2
+    },
+    "graaskamp": {
+        "avg_payout": 456.7391304347826,
+        "wins": 11,
+        "ties": 7,
+        "losses": 5
+    },
+    "random_tft": {
+        "avg_payout": 454.39130434782606,
+        "wins": 10,
+        "ties": 3,
+        "losses": 10
+    },
+    "tester": {
+        "avg_payout": 446.60869565217394,
+        "wins": 9,
+        "ties": 10,
+        "losses": 4
+    },
+    "random_strat": {
+        "avg_payout": 423.7826086956522,
+        "wins": 12,
+        "ties": 0,
+        "losses": 11
+    },
+    "adaptive": {
+        "avg_payout": 396.60869565217394,
+        "wins": 10,
+        "ties": 4,
+        "losses": 9
+    },
+    "feld": {
+        "avg_payout": 389.4347826086956,
+        "wins": 14,
+        "ties": 7,
+        "losses": 2
+    },
+    "joss": {
+        "avg_payout": 361.4782608695652,
+        "wins": 14,
+        "ties": 7,
+        "losses": 2
+    },
+    "prober": {
+        "avg_payout": 343.60869565217394,
+        "wins": 17,
+        "ties": 4,
+        "losses": 2
+    },
+    "always_d": {
+        "avg_payout": 328.4782608695652,
+        "wins": 21,
+        "ties": 2,
+        "losses": 0
+    }
+}
