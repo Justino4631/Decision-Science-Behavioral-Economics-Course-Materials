@@ -155,129 +155,79 @@ def mcts(root: Node, iterations: int, max_seconds: float) -> Node:
     node = root.select_child(optimal=True)
     return node
 
-def main(who_play_first=input('play first? y or n')):
-    print("TUI made by Riaan")
-    if who_play_first == 'y':
+def main(who_play_first: str | None = None) -> None:
+    if who_play_first is None:
+        who_play_first = input("Do you want to play first? (y/n) ").strip().lower()
 
-        while True:
-            start_time = time.time()
-           
+    print("TUI made by Riaan (cleaned up by me)")
+
+    game = Model()
+    human_player = 1 if who_play_first == "y" else 2
+    ai_player = 3 - human_player
+    current_player = 1
+
+    EMPTY_SLOT = "\u2009●\u2009"
+    RED_PIECE = "\033[31;1m\u2009●\u2009\033[0m"
+    CYAN_PIECE = "\033[36;1m\u2009●\u2009\033[0m" 
+    HIGHLIGHT_PIECE = "\033[31;43;1m\u2009●\u2009\033[0m" 
+
+    last_ai_move = None
+
+    while not game.game_over():
+
+        if current_player == human_player:
+            valid_cols = [str(col + 1) for col in game.valid_moves()]
+            
             while True:
-                player_move = input("   column number: (1-7)")
-                if ((player_move)) in ['1','2','3','4','5','6','7']:
-                    if (int(player_move)-1) in j.valid_moves():
-                        break
-            j.add_piece(int(player_move)-1,1)
-           
-            if j.game_over():
-                if j.is_winner(1):
-                    print(f"you win!")
+                user_input = input("   column number: (1-7) ").strip()
+                if user_input in valid_cols:
+                    col = int(user_input) - 1
                     break
-                else:
-                    print("tie")
 
-            prev_e = copy.deepcopy(j).board
-            e = mcts(root = Node(state=j), iterations = 100_000, max_seconds = 5)
-            print(f"mcts time: {time.time() - start_time}")
-            print('move has been chosen!')
-            j.set_game_board(copy.deepcopy(e.state.board))
+            game.add_piece(col, human_player)
+            current_player = ai_player
+
+        else:
+            prev_board = copy.deepcopy(game.board)
+
             start_time = time.time()
-            for i in range(3):
-                for f in range(3):
-                    if prev_e[i][f] != j.board[i][f]:
-                        j.board[i][f] = 3
-                        ind1=i
-                        ind2=f
-           
-            print(j.board)
-            to_print = f"         \u2009\u2009\u2009\u2009\u2009\u2009\u2009  board s\n   {j.board[0]}\n   {j.board[1]}\n   {j.board[2]}\n   {j.board[3]}\n   {j.board[4]}\n   {j.board[5]}"
-            to_print = to_print.replace('[',' ')
-            to_print = to_print.replace(']',' ')
-            to_print = to_print.replace('1','hehehe')
-            to_print = to_print.replace('0','lol')
-            to_print = to_print.replace('2','what')
-            to_print = to_print.replace('3','yeah')
+            best_node = mcts(root=Node(state=game), iterations=100_000, max_seconds=5)
+            print(f"mcts time: {time.time() - start_time:.4f}")
+            print("move has been chosen!")
 
+            game.set_game_board(copy.deepcopy(best_node.state.board))
 
-            to_print = to_print.replace('hehehe','\033[31;1m\u2009●\u2009\033[0m')
-            to_print = to_print.replace('what','\033[36;1m\u2009●\u2009\033[0m')
-            to_print = to_print.replace('yeah','\x1b[48;2;75;75;75m\033[33;1m\u2009●\u2009\033[0m\x1b[0m')
+            last_ai_move = None
+            for r in range(len(game.board)):
+                for c in range(len(game.board[0])):
+                    if prev_board[r][c] != game.board[r][c]:
+                        last_ai_move = (r, c)
+                        break
 
-            to_print = to_print.replace('lol','\u2009●\u2009')
+            current_player = human_player
 
-            to_print = to_print.replace(',',' ')
-            to_print = to_print.replace('s','\n\033[34;1m   \u2009\u20091  \u2009\u20092  \u2009\u20093  \u2009\u20094  \u2009\u20095  \u2009\u20096  \u2009\u20097 \033[37m')
-
-            print(to_print)
-            j.board[ind1][ind2] = 2
-            if j.game_over():
-                if j.is_winner(2):
-                    print(f"you lose")
-                    break
+        print("\n   board")
+        for r_idx, row in enumerate(game.board):
+            row_str = "  "
+            for c_idx, cell in enumerate(row):
+                if last_ai_move and (r_idx, c_idx) == last_ai_move:
+                    row_str += f" {HIGHLIGHT_PIECE}"
+                elif cell == 1:
+                    row_str += f" {RED_PIECE}"
+                elif cell == 2:
+                    row_str += f" {CYAN_PIECE}"
                 else:
-                    print("tie")
+                    row_str += f" {EMPTY_SLOT}"
+            print(row_str)
 
+        print("\033[34;1m    1   2   3   4   5   6   7 \033[37m\n")
+
+    if game.is_winner(human_player):
+        print("You win!")
+    elif game.is_winner(ai_player):
+        print("You lose...")
     else:
-        j = Model()
-        prev_e = [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]]
-        ind1 = 0
-        ind2 = 0
-        while True:
-            start_time = time.time()
-            e = mcts(root = Node(state=j),iterations = 100_000,max_seconds = 5)
-            print(f"mcts time: {time.time() - start_time}")
-            print('move has been chosen!')
-            j.set_game_board(copy.deepcopy(e.state.board))
-           
-            start_time = time.time()
-            for i in range(6):
-                for f in range(7):
-                    if prev_e[i][f] != j.board[i][f]:
-                        j.board[i][f] = 3
-                        ind1=i
-                        ind2=f
-           
-            print(j.board, "a")
-            to_print = f"         \u2009\u2009\u2009\u2009\u2009\u2009\u2009  board s\n   {j.board[0]}\n   {j.board[1]}\n   {j.board[2]}\n   {j.board[3]}\n   {j.board[4]}\n   {j.board[5]}"
-            to_print = to_print.replace('[',' ')
-            to_print = to_print.replace(']',' ')
-            to_print = to_print.replace('1','hehehe')
-            to_print = to_print.replace('0','lol')
-            to_print = to_print.replace('2','what')
-            to_print = to_print.replace('3','yeah')
-
-
-            to_print = to_print.replace('hehehe','\033[31;1m\u2009●\u2009\033[0m')
-            to_print = to_print.replace('what','\033[36;1m\u2009●\u2009\033[0m')
-            to_print = to_print.replace('yeah','\033[31;43;1m\u2009●\u2009\033[0m')
-
-            to_print = to_print.replace('lol','\u2009●\u2009')
-
-            to_print = to_print.replace(',',' ')
-            to_print = to_print.replace('s','\n\033[34;1m   \u2009\u20091  \u2009\u20092  \u2009\u20093  \u2009\u20094  \u2009\u20095  \u2009\u20096  \u2009\u20097 \033[37m')
-            if j.game_over():
-                if j.is_winner(1):
-                    print(f"you lose")
-                    break
-                else:
-                    print("tie")
-            print(f"tui generation time: {time.time() - start_time}")
-            print(to_print, "b")
-            j.board[ind1][ind2] = 1
-            while True:
-                player_move = input("   column number: (1-7)")
-                if ((player_move)) in ['1','2','3','4','5','6','7']:
-                    if (int(player_move)-1) in j.valid_moves():
-                        break
-
-            j.add_piece(int(player_move)-1,2)
-            if j.game_over():
-                if j.is_winner(2):
-                    print(f"you win!")
-                    break
-                else:
-                    print("tie")
-            prev_e = copy.deepcopy(j).board
+        print("Tie!")
 
 # ------- Execution Section -------
 if __name__ == "__main__":
