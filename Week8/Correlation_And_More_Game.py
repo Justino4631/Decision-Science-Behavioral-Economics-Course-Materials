@@ -208,7 +208,6 @@ def generate_procedural_questions():
             "answer": comp
         })
 
-    # Binomial expected value
     for n, p in [(100, 0.20), (50, 0.10), (200, 0.05), (80, 0.25)]:
         ev = str(round(n * p))
         q.append({
@@ -224,10 +223,6 @@ ALL_MCQS = BASE_MCQS + generate_procedural_questions()
 
 MODE_WEIGHTS = ["GTC", "GTC", "REGRESSION", "REGRESSION", "MATCH", "OUTLIER", "OUTLIER", "MCQ", "MCQ"]
 
-
-# ============================================================
-# DATA GENERATORS
-# ============================================================
 
 def generate_gtc_data(r, num_pts=140):
     cov = [[1, r], [r, 1]]
@@ -261,7 +256,6 @@ def generate_regression_data():
 
 
 def generate_outlier_data():
-    """One clean linear cloud plus a single severe outlier. Returns full arrays + its index."""
     slope = random.choice([-1.6, 1.6])
     x = np.linspace(-4, 4, 34)
     y = slope * x + np.random.normal(0, 0.45, len(x))
@@ -273,12 +267,6 @@ def generate_outlier_data():
 
 
 def generate_match_round():
-    """
-    Builds 4 mini scatterplots. A single regression line (fit to the TRUE
-    dataset) is drawn on all four panels. Only one dataset's cloud actually
-    hugs that line - the other three are decoys the line clearly does not fit.
-    Returns: list of (x, y) for 4 panels, correct panel index, the line's (slope, intercept).
-    """
     slope = round(random.uniform(-2.2, 2.2), 2)
     if abs(slope) < 0.5:
         slope = 1.1
@@ -290,16 +278,13 @@ def generate_match_round():
 
     datasets = [(x, y_true)]
 
-    # Decoy 1: much noisier cloud, same rough slope -> line drawn but doesn't hug it
     y_noisy = slope * x + intercept + np.random.normal(0, 4.5, len(x))
     datasets.append((x, y_noisy))
 
-    # Decoy 2: opposite/very different slope
     other_slope = -slope if abs(slope) > 0.8 else slope + random.choice([-2.5, 2.5])
     y_wrong_slope = other_slope * x + intercept + np.random.normal(0, 0.8, len(x))
     datasets.append((x, y_wrong_slope))
 
-    # Decoy 3: shifted intercept, offset well away from the drawn line
     y_shifted = slope * x + intercept + random.choice([-6, 6]) + np.random.normal(0, 0.8, len(x))
     datasets.append((x, y_shifted))
 
@@ -309,11 +294,6 @@ def generate_match_round():
     correct_idx = order.index(0)
 
     return shuffled, correct_idx, slope_fit, intercept_fit
-
-
-# ============================================================
-# MAIN APPLICATION
-# ============================================================
 
 class StatsGameApp:
     def __init__(self, root):
@@ -327,13 +307,12 @@ class StatsGameApp:
         self.rounds_played = 0
         self.correct_answer = None
         self.current_mode = None
-        self.current_cid = None  # matplotlib event connection id, tracked so we can disconnect
+        self.current_cid = None
 
         self._build_styles()
         self._build_layout()
         self.next_question()
 
-    # ---------- styling ----------
     def _build_styles(self):
         style = ttk.Style()
         style.theme_use("clam")
@@ -360,9 +339,7 @@ class StatsGameApp:
 
         style.configure("Horizontal.TScale", background=THEME["card"], troughcolor="#3a4b5f")
 
-    # ---------- layout ----------
     def _build_layout(self):
-        # Header
         header = tk.Frame(self.root, bg=THEME["bg"], pady=14)
         header.pack(side=tk.TOP, fill=tk.X)
 
@@ -376,11 +353,9 @@ class StatsGameApp:
                                     bg=THEME["bg"], fg=THEME["warn"])
         self.mode_label.pack(side=tk.RIGHT, padx=24)
 
-        # Body split
         body = tk.Frame(self.root, bg=THEME["bg"])
         body.pack(fill=tk.BOTH, expand=True, padx=20, pady=(0, 18))
 
-        # Left: plot card
         plot_card = tk.Frame(body, bg=THEME["plot_bg"], highlightthickness=1,
                               highlightbackground="#3a4b5f")
         plot_card.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 16))
@@ -389,7 +364,6 @@ class StatsGameApp:
         self.canvas = FigureCanvasTkAgg(self.fig, master=plot_card)
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        # Right: control panel card
         panel = tk.Frame(body, bg=THEME["panel"], width=380)
         panel.pack(side=tk.RIGHT, fill=tk.BOTH)
         panel.pack_propagate(False)
@@ -420,7 +394,6 @@ class StatsGameApp:
         self.btn_next.pack(fill=tk.X)
         self.btn_next.state(["disabled"])
 
-    # ---------- shared helpers ----------
     def _style_axes(self, ax, title=""):
         ax.set_facecolor(THEME["plot_bg"])
         ax.grid(True, linestyle="--", alpha=0.25, color=THEME["grid"])
@@ -467,7 +440,6 @@ class StatsGameApp:
             if isinstance(w, ttk.Button):
                 w.state(["disabled"])
 
-    # ---------- round driver ----------
     def next_question(self):
         self._reset_round()
         self.rounds_played += 1
@@ -483,7 +455,6 @@ class StatsGameApp:
         dispatch[self.current_mode]()
         self._update_score_label()
 
-    # ---------- MODE: Guess the Correlation ----------
     def setup_gtc_question(self):
         self.mode_label.config(text="Guess the Correlation")
         self.q_text.config(text="Estimate the correlation coefficient (r) shown in this scatterplot.")
@@ -529,7 +500,6 @@ class StatsGameApp:
         btn_submit = ttk.Button(self.interaction_frame, text="Submit Guess", command=submit)
         btn_submit.pack(fill=tk.X, pady=6)
 
-    # ---------- MODE: Regression line matching ----------
     def setup_regression_question(self):
         self.mode_label.config(text="Line of Best Fit")
         self.q_text.config(text="Which equation matches this least-squares regression line?")
@@ -558,7 +528,6 @@ class StatsGameApp:
             b.pack(fill=tk.X, pady=5)
             buttons.append(b)
 
-    # ---------- MODE: Match the graph to the regression line (click) ----------
     def setup_match_question(self):
         self.mode_label.config(text="Match the Graph")
         self.q_text.config(text="The same line is drawn on all four scatterplots. Click the one it was actually fit to.")
@@ -618,7 +587,6 @@ class StatsGameApp:
             b.grid(row=0, column=i, padx=4, sticky="ew")
             btn_row.columnconfigure(i, weight=1)
 
-    # ---------- MODE: Click the outlier ----------
     def setup_outlier_question(self):
         self.mode_label.config(text="Spot the Outlier")
         self.q_text.config(text="Click directly on the point that looks like a severe outlier.")
@@ -662,7 +630,6 @@ class StatsGameApp:
                  bg=THEME["panel"], fg=THEME["text_muted"], font=(THEME["font"], 10),
                  justify=tk.LEFT).pack(anchor="w", pady=10)
 
-    # ---------- MODE: Concept trivia ----------
     def setup_mcq_question(self):
         self.mode_label.config(text="Concept Check")
         mcq = random.choice(ALL_MCQS)
